@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Torrente Juego</title>
+
+<script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/aframe-physics-system@4.0.1/dist/aframe-physics-system.min.js"></script>
+
+<style>
+#mission{
+  position: fixed;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: black;
+  color: orange;
+  padding: 10px 20px;
+  font-family: sans-serif;
+  font-size: 18px;
+  border-radius: 5px;
+  z-index: 100;
+}
+#inventory{
+  position: fixed;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: black;
+  color: orange;
+  padding: 10px 20px;
+  font-family: sans-serif;
+  font-size: 16px;
+  border-radius: 5px;
+  z-index: 100;
+}
+</style>
+</head>
+
+<body>
+
+<div id="mission">Habla con el chinito para empezar la misión</div>
+<div id="inventory">Inventario: vacío</div>
+
+<a-scene physics="debug: false">
+
+  <a-sky src="https://upload.wikimedia.org/wikipedia/en/9/9a/Flag_of_Spain.svg"></a-sky>
+
+  <a-assets>
+    <a-asset-item id="houseModel" src="city.glb"></a-asset-item>
+    <a-asset-item id="houseModel2" src="city.glb"></a-asset-item>
+    <a-asset-item id="houseModel3" src="city.glb"></a-asset-item>
+
+    <a-asset-item id="francoModel" src="francisco_franco.glb"></a-asset-item>
+    <a-asset-item id="chinitoModel" src="jeong_seun_22.glb"></a-asset-item>
+
+    <img id="bandera" src="https://upload.wikimedia.org/wikipedia/en/9/9a/Flag_of_Spain.svg">
+  </a-assets>
+
+  
+  <a-entity light="type: ambient; intensity: 1"></a-entity>
+  <a-entity light="type: directional; intensity: 1" position="5 10 5"></a-entity>
+
+  
+  <a-entity id="player" position="-11.05108 5 5">
+    <a-camera 
+      wasd-controls
+      look-controls
+      cursor="rayOrigin: mouse"
+      raycaster="objects: .clickable; useWorldCoordinates: true"
+      rotation="-3.8961130068895984 6.302535746439054 0">
+    </a-camera>
+  </a-entity>
+
+ 
+  <a-entity gltf-model="#houseModel" position="0 0 0" scale="5.5 5.5 5.5"></a-entity>
+  <a-entity gltf-model="#houseModel2" position="-0.0497 0 445.09579" scale="5.5 5.5 5.5"></a-entity>
+  <a-entity gltf-model="#houseModel3" position="0 0 0" scale="5.5 5.5 5.5"></a-entity>
+
+  
+  <a-box position="0 0 0" width="30" height="0.1" depth="30" visible="false" static-body></a-box>
+
+  
+  <a-box position="0 2 -15" width="30" height="4" depth="1" visible="false" static-body></a-box>
+  <a-box position="0 2 15" width="30" height="4" depth="1" visible="false" static-body></a-box>
+  <a-box position="15 2 0" width="1" height="4" depth="30" visible="false" static-body></a-box>
+  <a-box position="-15 2 0" width="1" height="4" depth="30" visible="false" static-body></a-box>
+
+  
+  <a-entity id="chinito" class="clickable"
+    gltf-model="#chinitoModel"
+    position="-5.35491 -0.11307 69.93937"
+    scale="2 2 2"
+    rotation="0 180 0"
+    static-body>
+  </a-entity>
+
+  
+  <a-entity id="franco" class="clickable"
+    gltf-model="#francoModel"
+    position="-53.49534 4.736 -78.179"
+    scale="5.5 5.5 5.5"
+    static-body
+    rotation="0 90 0">
+  </a-entity>
+
+  
+  <a-plane 
+    id="banderaObj" 
+    class="clickable"
+    src="#bandera" 
+    position="-4.00949 1 56.45263" 
+    width="2" 
+    height="1.2" 
+    rotation="-90 0 0">
+  </a-plane>
+
+  
+  <a-box id="puerta" class="clickable"
+    position="-4.8516 1 -31.66794"
+    width="3"
+    height="5"
+    depth="0.3"
+    color="blue">
+  </a-box>
+
+</a-scene>
+
+<script>
+let fase = 0;
+let tieneBandera = false;
+
+const mission = document.getElementById('mission');
+const inventory = document.getElementById('inventory');
+
+function actualizarInventario(){
+  let inv = [];
+  if(tieneBandera) inv.push("Bandera de España");
+  inventory.innerText = "Inventario: " + (inv.length ? inv.join(", ") : "vacío");
+}
+
+document.addEventListener('click', function() {
+
+  const camera = document.querySelector('[camera]');
+  const raycaster = camera.components.raycaster;
+  if (!raycaster) return;
+
+  const intersects = raycaster.intersections;
+  if (intersects.length === 0) return;
+
+  const objeto = intersects[0].object.el;
+
+  
+  if(objeto.id === "chinito"){
+
+    if(fase === 0){
+      fase = 1;
+      mission.innerText = "Chinito: Mira gordito busca a Franco y dile que vas de mi parte.";
+    }
+
+    else if(fase === 2){
+      fase = 3;
+      mission.innerText = "Chinito: Vale ahora tráeme una bandera de España, que tengo mis movidas 🇪🇸";
+    }
+
+    else if(fase === 1){
+      mission.innerText = "Chinito: ¿Qué haces aquí? ¡Ve a ver a Franco!";
+    }
+
+    else if(fase === 3){
+      mission.innerText = "Chinito: Busca la bandera ";
+    }
+
+    else if(fase === 4){
+      mission.innerText = "Chinito: Buen trabajo menos mal, has tardado mucho vete a tu casa a descansar";
+    }
+  }
+
+  
+  if(objeto.id === "franco"){
+
+    if(fase === 0){
+      mission.innerText = "Franco: Primero habla con el chinito.";
+    }
+
+    else if(fase === 1){
+      fase = 2;
+      mission.innerText = "Franco: Has conseguido mi llave, ahora ve a hablar con el chinito para la siguiente misión.";
+    }
+
+    else if(fase >= 2){
+      mission.innerText = "Franco: Ya tienes mi llave ahora el chinito manda.";
+    }
+  }
+
+
+  if(objeto.id === "banderaObj"){
+
+    if(fase === 3 && !tieneBandera){
+      tieneBandera = true;
+      fase = 4;
+      objeto.setAttribute('visible','false');
+      mission.innerText = "Has cogido la bandera habla con el pedazo payo";
+      actualizarInventario();
+    }
+
+    else if(fase < 3){
+      mission.innerText = "Sigue las misiones primero.";
+    }
+  }
+
+  
+  if(objeto.id === "puerta"){
+
+    if(fase === 4 && tieneBandera){
+      mission.innerText = "Entrando al piso de Torrente";
+      window.location.href = "sala2.html";
+    } else {
+      mission.innerText = "Aún no has terminado la misión.";
+    }
+  }
+
+});
+</script>
+
+</body>
+</html>

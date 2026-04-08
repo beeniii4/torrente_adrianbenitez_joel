@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>FIN DEL JUEGO</title>
+
+<style>
+body{
+  margin:0;
+  background:black;
+  overflow:hidden;
+  color:white;
+  font-family:sans-serif;
+  text-align:center;
+}
+
+h1{
+  margin-top:20%;
+  font-size:50px;
+  color:red;
+}
+
+.bandera{
+  position:absolute;
+  width:100px;
+  animation: volar 10s linear infinite;
+}
+
+@keyframes volar{
+  0%{transform:translateY(100vh) rotate(0deg);}
+  100%{transform:translateY(-100vh) rotate(360deg);}
+}
+</style>
+</head>
+
+<body>
+
+<h1>FIN DEL JUEGO</h1>
+
+<script>
+// generar banderas volando
+for(let i=0;i<10;i++){
+  let img = document.createElement("img");
+  img.src = "https://upload.wikimedia.org/wikipedia/commons/9/9a/Flag_of_Spain.svg";
+  img.className = "bandera";
+  img.style.left = Math.random()*100 + "vw";
+  img.style.animationDuration = (5 + Math.random()*10) + "s";
+  document.body.appendChild(img);
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sala 4 - Torrente VR</title>
+<script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+
+<style>
+body{margin:0;font-family:sans-serif;background:#141414;color:#eaeaea;}
+#mission{position:fixed;top:10px;left:50%;transform:translateX(-50%);background:black;color:orange;padding:10px 20px;border-radius:5px;z-index:100;max-width:600px;text-align:center;}
+</style>
+</head>
+<body>
+
+<div id="mission">Torrente: Bienvenido al bar, vamos a buscar a Donald Trompeta…</div>
+
+<a-scene cursor="rayOrigin: mouse" raycaster="objects: .clickable">
+
+  <a-entity gltf-model="bar_test_for_comp.glb" position="0 0 0" scale="5 5 5"></a-entity>
+
+  <a-entity id="donald" class="clickable"
+    gltf-model="realistic_symmetrical_donald_trump.glb"
+    position="587.58879 160.99015 -0.417"
+    rotation="0 180 0"
+    visible="true"
+    scale="300 300 300">
+  </a-entity>
+
+
+
+  </a-entity>
+  <a-cylinder id="portal" class="clickable"
+      position="-302.88236 220.54848 -267.81486"
+      rotation="0 0 0"
+      radius="3"
+      height="6"
+      scale="10 28.00032 10"
+      color="#0000ff"
+      opacity="0"
+      visible="true">
+    <a-text value="" align="center" position="0 4 0" color="#fff"></a-text>
+  </a-cylinder>
+
+<a-entity id="player" position="-3.22067 210 2.99631">
+  
+  <a-entity 
+    camera
+    position="-3.22067 6.79263 2.99631"
+    scale="1 1 1"
+    wasd-controls="acceleration:1600"
+    look-controls
+    cursor="rayOrigin: mouse"
+    raycaster="objects: .clickable">
+  </a-entity>
+
+</a-entity>
+
+ 
+</a-scene>
+
+<script>
+const mission = document.getElementById('mission');
+const portal = document.getElementById('portal');
+let interactuando = false;
+
+const dialogos = [
+  "Torrente: Oye, Donald Trompeta, deja de correr como gilipollas y atiende.",
+  "Donald: Qué cojones pasa, Torrente, ¿otra movida de tus putas locuras?",
+  "Torrente: Tranquilo, macho, la cosa es seria… tenemos que secuestrar a Perro Sánchez antes de que joda Españistán.",
+  "Donald: Joder, Torrente… qué cabrón estás hecho, pero me apunto.",
+  "Torrente: Bien, prepárate, que esto va a ser de puta madre, colega.",
+  "Donald: Vale, Torrente, vamos a liarla parda sin que nos pillen." ,
+  "Interactua con la cerveza para teletransportarte" ,
+];
+
+function mostrarDialogo(indice=0){
+  if(indice >= dialogos.length){
+    mission.innerText = "Interacción completada. Acércate al portal azul para continuar.";
+    portal.setAttribute('visible', 'true');
+    return;
+  }
+  mission.innerText = dialogos[indice];
+  setTimeout(() => mostrarDialogo(indice + 1), 4000);
+}
+
+document.addEventListener('click', function () {
+  const camera = document.querySelector('[camera]');
+  const raycaster = camera.components.raycaster;
+  if (!raycaster) return;
+
+  const intersects = raycaster.intersections;
+  if (intersects.length === 0) return;
+
+  const objeto = intersects[0].object.el;
+
+  if(objeto && objeto.id === "donald" && !interactuando){
+    interactuando = true;
+    mostrarDialogo();
+  }
+
+  if(objeto && objeto.id === "portal" && portal.getAttribute('visible') === true){
+    window.location.href = "parking.html";
+  }
+});
+</script>
+
+</body>
+</html>

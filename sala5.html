@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sala 4 - Torrente VR</title>
+
+<script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+
+<style>
+body{margin:0;font-family:sans-serif;background:#141414;color:#eaeaea;}
+#mission{
+position:fixed;
+top:10px;
+left:50%;
+transform:translateX(-50%);
+background:black;
+color:orange;
+padding:10px 20px;
+border-radius:5px;
+z-index:100;
+max-width:600px;
+text-align:center;
+}
+</style>
+</head>
+
+<body>
+
+<div id="mission">Torrente: Bienvenido al club, habla con trompeta para buscar al perro y dile que deje de mirar a las chicas</div>
+
+<!-- 🎵 MÚSICA -->
+<audio id="musica" src="el_fary_apatrullando_la_ciudad.mp3" autoplay loop window.location.href = "final.html";></audio>
+
+<a-scene cursor="rayOrigin: mouse" raycaster="objects: .clickable">
+
+  <!-- CLUB -->
+  <a-entity gltf-model="nightclub_bloom_unit.glb" position="0 0 0" scale="5 5 5"></a-entity>
+
+  <!-- DONALD -->
+  <a-entity id="donald" class="clickable"
+    gltf-model="realistic_symmetrical_donald_trump.glb"
+    position="137.66462 157.26424 -713.18052"
+    scale="150 150 150">
+  </a-entity>
+
+  <!-- CHICAS -->
+  <a-entity id="girl1" class="clickable"
+    gltf-model="ai_girl_in_bikini..._like_it.glb"
+    position="2 2 -3"
+    scale="1.5 1.5 1.5">
+  </a-entity>
+
+ 
+
+  <!-- PERRO SANCHE -->
+  <a-entity id="perro" class="clickable"
+    gltf-model="dog.glb"
+    position="1055.71019 49.68279 -1490.05093"
+    scale="200 200 200">
+  </a-entity>
+
+  <!-- PORTAL -->
+  <a-cylinder id="portal" class="clickable"
+      position="0 2 -10"
+      radius="2"
+      height="4"
+      color="#0000ff"
+      opacity="0.3"
+      visible="false">
+  </a-cylinder>
+
+  <!-- PLAYER -->
+  <a-entity id="player" position="150 200 0">
+    <a-entity 
+      camera
+      wasd-controls="acceleration:500"
+      look-controls
+      cursor="rayOrigin: mouse"
+      raycaster="objects: .clickable">
+    </a-entity>
+  </a-entity>
+
+</a-scene>
+
+<script>
+const mission = document.getElementById('mission');
+let interactuando = false;
+
+function dialogo(texto){
+  mission.innerText = texto;
+}
+
+// CLICK GLOBAL
+document.addEventListener('click', function () {
+  const camera = document.querySelector('[camera]');
+  const raycaster = camera.components.raycaster;
+  if (!raycaster) return;
+
+  const intersects = raycaster.intersections;
+  if (intersects.length === 0) return;
+
+  const obj = intersects[0].object.el;
+
+  // DONALD
+  if(obj.id === "donald"){
+    dialogo("Torrente: Donald, espabila,deja de mirar culitos que buscamos a Perro Sanche.");
+  }
+
+  
+
+  
+
+  if(obj.id === "perro"){
+    dialogo("Torrente: si es el feo de perro sanche");
+    
+    setTimeout(()=>{
+      window.location.href = "final.html";
+    },2000);
+  }
+
+  
+  if(obj.id === "portal"){
+    window.location.href = "parking.html";
+  }
+});
+
+
+</script>
+
+</body>
+</html>

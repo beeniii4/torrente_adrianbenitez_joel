@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Torrente VR Game</title>
+<script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+
+<style>
+body{margin:0;font-family:sans-serif;background:#141414;color:#eaeaea;}
+#mission{position:fixed;top:10px;left:50%;transform:translateX(-50%);background:black;color:orange;padding:10px 20px;border-radius:5px;z-index:100;}
+#inventory{position:fixed;bottom:10px;left:50%;transform:translateX(-50%);background:black;color:orange;padding:10px 20px;border-radius:5px;z-index:100;}
+</style>
+</head>
+
+<body>
+
+<div id="mission">Franco: Torrente, haz clic en la pantalla para recibir instrucciones</div>
+<div id="inventory">Inventario: vacio</div>
+
+<a-scene cursor="rayOrigin: mouse" raycaster="objects: .clickable">
+
+ 
+  <a-entity gltf-model="house_interior.glb" position="-76 -51 -252"></a-entity>
+
+  
+  <a-entity id="chica" class="clickable"
+    gltf-model="young_woman.glb"
+    position="-369.06754 -4.32363 -111.05094"
+    rotation="0 -155.76373322647046 0"
+    scale="59.43832 46.31136 55.47287">
+  </a-entity>
+
+  <a-assets>
+    <img id="pantalla" src="pantalla.jpg">
+  </a-assets>
+
+  
+  <a-plane id="pantallaInteractiva" class="clickable"
+    src="#pantalla"
+    position="68.436 37.114 -65.271"
+    rotation="0 -90.129 0"
+    scale="0.753 0.692 1.000"
+    width="180"
+    height="70">
+  </a-plane>
+
+ 
+  <a-cylinder id="portalChica" class="clickable" 
+      position="-463.43042 -4 105.39919" 
+      rotation="0 0 0" 
+      radius="5" 
+      height="10" 
+      color="#0000ff" 
+      opacity="0.6">
+    <a-text value="Portal a Sala 3" 
+            align="center" 
+            position="0 6 0" 
+            color="#fff">
+    </a-text>
+  </a-cylinder>
+
+  
+  <a-entity>
+    <a-camera 
+      wasd-controls="acceleration: 300"
+      look-controls
+      cursor="rayOrigin: mouse"
+      raycaster="objects: .clickable">
+    </a-camera>
+  </a-entity>
+
+</a-scene>
+
+<script>
+let tieneLlave = false;
+let inicioCompletado = false;
+
+const mission = document.getElementById('mission');
+const inventory = document.getElementById('inventory');
+
+function actualizarInventario(){
+  inventory.innerText = "Inventario: " + (tieneLlave ? "Llave robada " : "vacio");
+}
+
+
+document.addEventListener('click', function () {
+  const camera = document.querySelector('[camera]');
+  const raycaster = camera.components.raycaster;
+  if (!raycaster) return;
+
+  const intersects = raycaster.intersections;
+  if (intersects.length === 0) return;
+
+  const objeto = intersects[0].object.el;
+
+  
+  if(objeto.id === "pantallaInteractiva" && !inicioCompletado){
+    mission.innerText = "Franco: Dentro de la casa hay una mujer, ve y roba las llaves.";
+    inicioCompletado = true;
+    return;
+  }
+
+  
+  if(objeto.id === "chica" && inicioCompletado){
+    if(!tieneLlave){
+      mission.innerText = "Torrente: Esta chiquilla tiene algo que me interesa y no es su carita";
+      setTimeout(()=>{
+        tieneLlave = true;
+        mission.innerText = "Torrente: Llaves robadas";
+        actualizarInventario();
+      }, 5000);
+    } else {
+      mission.innerText = "Torrente: Ya esta limpia, no tiene nada mas.";
+    }
+  }
+
+  
+  if(objeto.id === "portalChica" && tieneLlave){
+    window.location.href = "sala3.html";
+  }
+
+});
+</script>
+
+</body>
+</html>

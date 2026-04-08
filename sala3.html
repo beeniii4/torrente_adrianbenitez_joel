@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sala 3 - Torrente VR</title>
+<script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+
+<style>
+body{margin:0;font-family:sans-serif;background:#141414;color:#eaeaea;}
+#mission{position:fixed;top:10px;left:50%;transform:translateX(-50%);background:black;color:orange;padding:10px 20px;border-radius:5px;z-index:100;}
+</style>
+</head>
+<body>
+
+<div id="mission">Torrente: Mira el coche, haz clic para interactuar.</div>
+
+<a-scene cursor="rayOrigin: mouse" raycaster="objects: .clickable">
+
+  <!-- CIELO de amanecer -->
+  <a-assets>
+    <img id="skyMorning" src="paisaje-nuboso-fondo-sol-amanecer-cielo-nubes_263368-17236.avif">
+  </a-assets>
+  <a-sky src="#skyMorning" rotation="0 -90 0"></a-sky>
+
+  <!-- Garaje grande -->
+  <a-entity gltf-model="parking_lot.glb" 
+            position="0 0 0" 
+            scale="10 10 10">
+  </a-entity>
+
+  <!-- Coche aparcado -->
+  <a-entity id="coche" class="clickable" 
+    gltf-model="1996_seat_ibiza_free_download.glb" 
+    position="1.18594 0 67.21143" 
+    rotation="0 180 0" 
+    scale="1.66849 1.58385 1">
+  </a-entity>
+
+  <!-- Cámara elevada -->
+  <a-entity position="0 3 10">
+    <a-camera 
+      wasd-controls="acceleration: 300"
+      look-controls
+      cursor="rayOrigin: mouse"
+      raycaster="objects: .clickable">
+    </a-camera>
+  </a-entity>
+
+</a-scene>
+
+<script>
+document.addEventListener('click', function () {
+  const camera = document.querySelector('[camera]');
+  const raycaster = camera.components.raycaster;
+  if (!raycaster) return;
+
+  const intersects = raycaster.intersections;
+  if (intersects.length === 0) return;
+
+  const objeto = intersects[0].object.el;
+
+  // Interacción con el coche → mensaje de bar antes de ir a sala4
+  if (objeto.id === "coche") {
+    const mission = document.getElementById('mission');
+    mission.innerText = "Torrente: Vamos al bar a beber 🍺 antes de la gran mision perro sanche voy a por ti ";
+
+    // Espera 3 segundos y luego redirige a sala4
+    setTimeout(() => {
+      window.location.href = "sala4.html";
+    }, 3000);
+  }
+});
+</script>
+
+</body>
+</html>
