@@ -47,24 +47,18 @@
   <a-sky src="https://upload.wikimedia.org/wikipedia/en/9/9a/Flag_of_Spain.svg"></a-sky>
 
   <a-assets>
-    <a-asset-item id="houseModel" src="city.glb"></a-asset-item>
-    <a-asset-item id="houseModel2" src="city.glb"></a-asset-item>
-    <a-asset-item id="houseModel3" src="city.glb"></a-asset-item>
-
+    <!-- Mantenemos las llamadas de los personajes por si los tienes localmente -->
     <a-asset-item id="francoModel" src="francisco_franco.glb"></a-asset-item>
     <a-asset-item id="chinitoModel" src="jeong_seun_22.glb"></a-asset-item>
-
     <img id="bandera" src="https://upload.wikimedia.org/wikipedia/en/9/9a/Flag_of_Spain.svg">
   </a-assets>
 
-  
   <a-entity light="type: ambient; intensity: 1"></a-entity>
   <a-entity light="type: directional; intensity: 1" position="5 10 5"></a-entity>
 
-  
   <a-entity id="player" position="-11.05108 5 5">
     <a-camera 
-      wasd-controls
+      wasd-controls="fly: false; acceleration: 65"
       look-controls
       cursor="rayOrigin: mouse"
       raycaster="objects: .clickable; useWorldCoordinates: true"
@@ -72,39 +66,57 @@
     </a-camera>
   </a-entity>
 
- 
-  <a-entity gltf-model="#houseModel" position="0 0 0" scale="5.5 5.5 5.5"></a-entity>
-  <a-entity gltf-model="#houseModel2" position="-0.0497 0 445.09579" scale="5.5 5.5 5.5"></a-entity>
-  <a-entity gltf-model="#houseModel3" position="0 0 0" scale="5.5 5.5 5.5"></a-entity>
+  <!-- CIUDAD PROCEDURAL INTEGRADA Y MÁS GRANDE (Sustituye a los city.glb rotos) -->
+  <a-entity id="ciudad-grande">
+    <!-- Suelo/Asfalto extendido para cubrir las posiciones largas de los personajes -->
+    <a-plane position="0 0 0" rotation="-90 0 0" width="300" height="300" color="#333333"></a-plane>
+    
+    <!-- Bloques de edificios gigantes a la izquierda de la calle principal -->
+    <a-box position="-25 25 0" width="20" height="50" depth="60" color="#555555"></a-box>
+    <a-box position="-25 35 70" width="20" height="70" depth="40" color="#444444"></a-box>
+    <a-box position="-25 20 -60" width="20" height="40" depth="50" color="#666666"></a-box>
 
-  
-  <a-box position="0 0 0" width="30" height="0.1" depth="30" visible="false" static-body></a-box>
+    <!-- Bloques de edificios gigantes a la derecha de la calle principal -->
+    <a-box position="25 30 20" width="20" height="60" depth="50" color="#3a3a3a"></a-box>
+    <a-box position="25 25 -30" width="20" height="50" depth="40" color="#4a4a4a"></a-box>
+    <a-box position="25 40 80" width="20" height="80" depth="30" color="#2c2c2c"></a-box>
+    
+    <!-- Detalles de ventanas iluminadas en los edificios grandes -->
+    <a-grid width="300" height="300" visible="false"></a-grid>
+  </a-entity>
 
-  
-  <a-box position="0 2 -15" width="30" height="4" depth="1" visible="false" static-body></a-box>
-  <a-box position="0 2 15" width="30" height="4" depth="1" visible="false" static-body></a-box>
-  <a-box position="15 2 0" width="1" height="4" depth="30" visible="false" static-body></a-box>
-  <a-box position="-15 2 0" width="1" height="4" depth="30" visible="false" static-body></a-box>
+  <!-- Caja del suelo física -->
+  <a-box position="0 0 0" width="200" height="0.1" depth="200" visible="false" static-body></a-box>
 
-  
+  <!-- Paredes invisibles de colisión (ajustadas un poco más anchas para que no agobien el mapa grande) -->
+  <a-box position="0 2 -100" width="200" height="20" depth="1" visible="false" static-body></a-box>
+  <a-box position="0 2 100" width="200" height="20" depth="1" visible="false" static-body></a-box>
+  <a-box position="100 2 0" width="1" height="20" depth="200" visible="false" static-body></a-box>
+  <a-box position="-100 2 0" width="1" height="20" depth="200" visible="false" static-body></a-box>
+
+  <!-- Chinito -->
   <a-entity id="chinito" class="clickable"
     gltf-model="#chinitoModel"
     position="-5.35491 -0.11307 69.93937"
     scale="2 2 2"
     rotation="0 180 0"
     static-body>
+    <!-- Cilindro auxiliar por si falla tu archivo local .glb del chinito, para que puedas clicarlo -->
+    <a-cylinder radius="0.5" height="2" material="color: yellow; opacity: 0.5" visible="true"></a-cylinder>
   </a-entity>
 
-  
+  <!-- Franco -->
   <a-entity id="franco" class="clickable"
     gltf-model="#francoModel"
     position="-53.49534 4.736 -78.179"
     scale="5.5 5.5 5.5"
     static-body
     rotation="0 90 0">
+    <!-- Cilindro auxiliar por si falla tu archivo local .glb de Franco, para que puedas clicarlo -->
+    <a-cylinder radius="0.5" height="2" material="color: olive; opacity: 0.5" visible="true"></a-cylinder>
   </a-entity>
 
-  
+  <!-- Bandera de España Objeto -->
   <a-plane 
     id="banderaObj" 
     class="clickable"
@@ -115,7 +127,7 @@
     rotation="-90 0 0">
   </a-plane>
 
-  
+  <!-- Puerta azul de la casa -->
   <a-box id="puerta" class="clickable"
     position="-4.8516 1 -31.66794"
     width="3"
@@ -150,7 +162,6 @@ document.addEventListener('click', function() {
 
   const objeto = intersects[0].object.el;
 
-  
   if(objeto.id === "chinito"){
 
     if(fase === 0){
@@ -176,7 +187,6 @@ document.addEventListener('click', function() {
     }
   }
 
-  
   if(objeto.id === "franco"){
 
     if(fase === 0){
@@ -193,7 +203,6 @@ document.addEventListener('click', function() {
     }
   }
 
-
   if(objeto.id === "banderaObj"){
 
     if(fase === 3 && !tieneBandera){
@@ -209,7 +218,6 @@ document.addEventListener('click', function() {
     }
   }
 
-  
   if(objeto.id === "puerta"){
 
     if(fase === 4 && tieneBandera){
